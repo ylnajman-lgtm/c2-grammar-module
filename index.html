@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C2 Grammar Module for Hebrew Speakers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&family=Noto+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf7f2;--panel:#fff;--ink:#1f2430;--mute:#5d6472;--line:#e4ddd0;--acc:#1e4d8c;--acc2:#e8eff9;--good:#1f7a4d;--goodbg:#e6f4ec;--bad:#b3261e;--badbg:#fbeae8;--warn:#8a5a00;--warnbg:#fff3d6;--shadow:0 1px 2px rgba(31,36,48,.06),0 4px 14px rgba(31,36,48,.05)}
+@media(prefers-color-scheme:dark){:root{--bg:#14171d;--panel:#1c2029;--ink:#eceae4;--mute:#9aa1ae;--line:#2c323e;--acc:#8db6f0;--acc2:#222c3d;--good:#6fd09b;--goodbg:#19302a;--bad:#ff8f86;--badbg:#38201f;--warn:#f0c470;--warnbg:#33290f;--shadow:none}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.2;margin:.2em 0 .5em}
+h1{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:700}h2{font-size:1.4rem;margin-top:1.6em}h3{font-size:1.1rem;margin:.3em 0}
+.shell{display:grid;grid-template-columns:290px 1fr;min-height:100vh}
+aside{border-right:1px solid var(--line);padding:22px 14px;position:sticky;top:0;height:100vh;overflow:auto;background:var(--panel)}
+.brand{font:700 1.05rem Fraunces,Georgia,serif;padding:0 10px 14px}.brand small{display:block;font:500 .75rem Inter,sans-serif;color:var(--mute);letter-spacing:.04em;text-transform:uppercase}
+.navlink{display:flex;gap:10px;align-items:baseline;padding:8px 10px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:.92rem}
+.navlink:hover{background:var(--acc2)}.navlink.on{background:var(--acc2);color:var(--acc);font-weight:600}
+.nn{width:1.4em;color:var(--mute);font-variant-numeric:tabular-nums}.nt{flex:1}.np{color:var(--mute);font-size:.78rem;font-variant-numeric:tabular-nums}
+main{padding:36px clamp(18px,5vw,56px) 80px;max-width:860px;outline:none}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);font-weight:600;margin:0}
+.lede{font-size:1.1rem;color:var(--mute);max-width:62ch;margin-bottom:16px}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin:22px 0}.stats div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 18px;box-shadow:var(--shadow)}
+.stats b{display:block;font:700 1.6rem Fraunces,Georgia,serif}.stats span{font-size:.8rem;color:var(--mute)}
+.how{background:var(--acc2);border-radius:10px;padding:12px 16px;font-size:.93rem;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.ucard{display:flex;flex-direction:column;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;text-decoration:none;color:var(--ink);box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+.ucard:hover{transform:translateY(-2px);border-color:var(--acc)}.ucard .tag{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--mute)}.ucard .un{font-size:.8rem;color:var(--acc);font-weight:600}
+.bar{height:6px;background:var(--line);border-radius:3px;margin:10px 0 6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}.meta{font-size:.78rem;color:var(--mute)}
+.alert{background:var(--warnbg);border-left:4px solid var(--warn);padding:12px 16px;border-radius:0 10px 10px 0;margin:16px 0}
+.lesson{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 22px 18px;box-shadow:var(--shadow)}.lesson h2{margin-top:.8em}.lesson li{margin:.45em 0}
+.contrast{direction:ltr;text-align:left;width:100%;border-collapse:collapse;margin-top:12px;font-size:.95rem}.contrast th{text-align:left;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);padding:6px 10px}
+.contrast td{padding:8px 10px;border-top:1px solid var(--line)}.x{color:var(--bad);text-decoration:line-through;text-decoration-thickness:1px}.v{color:var(--good);font-weight:500}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin:14px 0;box-shadow:var(--shadow)}
+.item.done{border-color:var(--good)}.item.revealed{border-color:var(--bad)}
+.item-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}.num{width:26px;height:26px;border-radius:50%;background:var(--acc);color:var(--bg);display:grid;place-items:center;font-size:.82rem;font-weight:600}
+.type{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
+.stem{font-size:1.08rem;margin:.3em 0 .8em}.blank{display:inline-block;width:3.2em;border-bottom:2px solid var(--ink);vertical-align:baseline;margin:0 2px}
+.opts{display:grid;gap:8px}.opt{display:flex;gap:12px;align-items:baseline;text-align:left;width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--acc);background:var(--acc2)}.opt .k{font-weight:600;color:var(--mute);min-width:1em}
+.opt.right{border-color:var(--good);background:var(--goodbg)}.opt.wrongopt{border-color:var(--bad);background:var(--badbg);text-decoration:line-through;color:var(--mute)}
+.opt:disabled{cursor:default}
+.gapin,.typein{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-bottom:2px solid var(--acc);border-radius:8px;padding:4px 10px;margin:0 4px}
+.typein{width:100%;margin:0;padding:10px 12px;resize:vertical}.gapin:focus,.typein:focus{outline:2px solid var(--acc);outline-offset:1px}
+.right.gapin,.right.typein,input.right,textarea.right{border-color:var(--good);background:var(--goodbg)}
+.actions,.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+button,.linkbtn{font:inherit;cursor:pointer;border-radius:9px;padding:8px 16px;border:1px solid var(--line);background:var(--panel);color:var(--ink);text-decoration:none;display:inline-block}
+button.primary,.primary{background:var(--acc);border-color:var(--acc);color:var(--bg);font-weight:600}
+.ghost{background:transparent;color:var(--mute);font-size:.88rem;padding:6px 12px}.ghost:hover:not(:disabled){color:var(--ink);border-color:var(--mute)}button:disabled{opacity:.5;cursor:default}
+button:focus-visible,a:focus-visible,.opt:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.hint{background:var(--acc2);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:.92rem}
+.fb{margin-top:10px;border-radius:8px;padding:0;font-size:.95rem}.fb.good,.fb.bad,.fb.warn{padding:10px 14px}
+.fb.good{background:var(--goodbg);color:var(--ink);border-left:4px solid var(--good)}.fb.bad{background:var(--badbg);border-left:4px solid var(--bad)}.fb.warn{background:var(--warnbg);border-left:4px solid var(--warn)}
+.summary{margin:22px 0 4px;padding:14px 18px;background:var(--acc2);border-radius:12px}
+.rwrap .from{font-size:.78rem;color:var(--mute);margin:14px 0 -6px 4px}
+@media(max-width:820px){.shell{display:block}aside{position:static;height:auto;border:0;border-bottom:1px solid var(--line);display:block;padding:12px 8px}
+#nav{display:flex;overflow-x:auto;gap:4px;padding-bottom:6px}.navlink{white-space:nowrap;flex:none}.nt{display:none}.nn{width:auto}.np{display:none}
+.navlink:first-child .nt,.navlink span:only-child{display:inline}main{padding-top:24px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+body[data-lang=en] .he{display:none!important}body[data-lang=he] .en{display:none!important}
+.he{font-family:"Noto Sans Hebrew",Inter,system-ui,sans-serif}.he.blk{display:block;direction:rtl;text-align:right}
+body[data-lang=both] .he.blk{color:var(--mute);margin-top:5px;font-size:.96em}
+body[data-lang=both] .en:has(+ .he.sl)::after{content:" / "}.he.sl{display:inline}
+.lesson ul{padding:0;padding-inline-start:1.3em}
+/* English fragments inside Hebrew text keep their own direction, so punctuation stays on the correct side */
+.ltr{unicode-bidi:isolate;direction:ltr}.arrow{font-weight:700;font-size:1.4em;line-height:1;color:var(--acc);padding:0 .2em}.not{color:var(--bad);letter-spacing:.04em}.codebox{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin:16px 0;box-shadow:var(--shadow)}.codebox label{font-weight:600;display:block;margin-bottom:4px}.nameinp{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:12px}.codeout{width:100%;font:.8rem/1.4 ui-monospace,Menlo,Consolas,monospace;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;word-break:break-all;resize:vertical}.codemsg{margin-top:8px;min-height:1.4em}.codestats{color:var(--mute)}.ltr.ex{display:block;text-align:left;margin:.2em 0;padding:0 .5em}.he b{unicode-bidi:isolate}
+/* Hebrew-only mode: explanatory containers run right to left; exercise sentences stay left to right */
+body[data-lang=he] .lesson,body[data-lang=he] .alert,body[data-lang=he] .how,body[data-lang=he] .summary,body[data-lang=he] .lede,body[data-lang=he] .eyebrow,body[data-lang=he] main h2{direction:rtl;text-align:right}
+body[data-lang=he] main h1{text-align:right}
+body[data-lang=he] .alert{border-left:0;border-right:4px solid var(--warn);border-radius:10px 0 0 10px}
+body[data-lang=he] .fb.good,body[data-lang=he] .fb.bad,body[data-lang=he] .fb.warn{border-left:0;border-right:4px solid var(--warn)}
+body[data-lang=he] .fb.good{border-right-color:var(--good)}body[data-lang=he] .fb.bad{border-right-color:var(--bad)}
+body[data-lang=he] .hint{direction:rtl;text-align:right}
+.langsw{display:flex;gap:0;margin:0 10px 14px;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.langsw button{flex:1;border:0;border-radius:0;background:transparent;padding:6px 4px;font-size:.85rem;color:var(--mute)}
+.langsw button[aria-pressed=true]{background:var(--acc);color:var(--bg);font-weight:600}
+@media(max-width:820px){.langsw{margin:0 8px 8px;max-width:320px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside><div class="brand">C2 Grammar<small>For Hebrew speakers</small></div><div class="langsw" role="group" aria-label="Explanation language / שפת ההסברים"><button type="button" data-l="en">English</button><button type="button" data-l="he" lang="he">עברית</button><button type="button" data-l="both">Both</button></div><nav id="nav" aria-label="Units"></nav></aside>
+<main id="main" tabindex="-1"></main>
+</div>
+<script>
+const UNITS = [
+{ id:"articles", title:"Articles & generic reference", tag:"Determiners",
+ alert:"Hebrew marks definiteness only (<i>ha-</i>) and has no indefinite article. Two classic transfers follow: <b>dropping a/an</b> before singular countable nouns (<i>She is teacher</i>) and <b>adding the</b> to abstract or generic nouns (<i>The life is short</i>).",
+ rules:[
+  "<b>Zero article</b> for generic plural and uncountable nouns: <i>Nature inspires poets. Honesty matters.</i>",
+  "<b>a/an</b> for any singular countable noun that is not identifiable, including jobs and roles: <i>She is an interpreter. Such a view. Quite a surprise. What a mess.</i>",
+  "<b>the</b> for identifiable or unique referents, superlatives, <i>only/same/first</i>: <i>the only person, the most qualified.</i>",
+  "Institutional uses differ in meaning: <i>in hospital</i> (as a patient) vs <i>in the hospital</i> (the building)."],
+ contrast:[["The nature has always inspired poets.","Nature has always inspired poets."],["He works as architect.","He works as an architect."],["I have the headache.","I have a headache."]],
+ items:[
+ {t:"mc",q:"___ unemployment is a structural problem in many economies.",o:["The","A","(no article)","An"],a:2,h:"Is this a general statement about an abstract noun?",e:"Abstract, uncountable nouns used generically take <b>no article</b>. <i>The unemployment</i> would need a limiting phrase, e.g. <i>the unemployment in this region</i>."},
+ {t:"spot",q:"Which sentence contains an article error?",o:["Time flies when you are enjoying yourself.","The nature has always inspired poets.","He was elected president of the union.","The Netherlands exports a great deal of cheese."],a:1,h:"Look for a generic noun with an unnecessary <i>the</i>.",e:"<i>Nature</i> is generic here, so: <i>Nature has always inspired poets.</i> A unique role after <i>elect</i> (<i>president</i>) is also used without an article."},
+ {t:"gap",q:"She works as ___ interpreter at the UN.",a:["an"],h:"Professions are singular countable nouns. Mind the sound of the next word.",e:"<b>an</b> interpreter: a singular countable noun needs an article, and <i>interpreter</i> begins with a vowel sound."},
+ {t:"mc",q:"I have ___ terrible headache.",o:["the","a","(no article)","some"],a:1,h:"Hebrew uses a possessive structure here; English uses an indefinite article.",e:"<i>a</i> terrible headache. Illnesses like <i>a cold, a headache</i> take <i>a</i> (but <i>flu, measles</i> take none)."},
+ {t:"mc",q:"Such ___ remarkable achievement deserves recognition.",o:["the","an","a","(no article)"],a:2,h:"The article follows <i>such</i> and precedes the adjective. Check the sound of <i>remarkable</i>.",e:"<i>such a</i> + adjective + singular noun. <i>Remarkable</i> starts with a consonant sound, so <b>a</b>."},
+ {t:"type",q:"Correct the sentence: <b>The patience is a virtue.</b>",a:["Patience is a virtue."],h:"One word has to go.",e:"<i>Patience is a virtue.</i> Generic abstract noun, no article."}
+ ]},
+{ id:"relatives", title:"Relative clauses", tag:"Syntax",
+ alert:"Hebrew relative clauses (<i>she-</i>) often add an <b>extra pronoun</b> that repeats the noun: <i>the man that I spoke with him</i>. English leaves a gap instead. Hebrew <i>kol ma she-</i> also leads to <i>all what</i>.",
+ rules:[
+  "<b>Never repeat</b> the relativised noun as a pronoun: <i>the report that I read</i>, not <i>that I read it</i>.",
+  "The preposition stays at the end (informal) or moves before <i>whom/which</i> (formal): <i>the colleague I work with / with whom I work.</i>",
+  "<b>whose</b> replaces possessives; <b>which</b> (comma) can refer to a whole clause: <i>He passed, which surprised everyone.</i>",
+  "After <i>all, everything, something, nothing, the only</i> use <b>that</b>, not <i>what</i>.",
+  "Reduce when possible: <i>the people who are waiting</i> → <i>the people waiting</i>."],
+ contrast:[["The method which we used it was unreliable.","The method which we used was unreliable."],["All what you need is patience.","All that you need is patience."],["The man that his car was stolen...","The man whose car was stolen..."]],
+ items:[
+ {t:"spot",q:"Which sentence contains an error?",o:["The candidate whose application we rejected has appealed.","The method which we used it was unreliable.","The colleague with whom I share an office is retiring.","Everything that she said was true."],a:1,h:"Look for a pronoun that repeats the relative.",e:"<i>The method which we used was unreliable.</i> The relative pronoun already represents the object, so <i>it</i> is redundant."},
+ {t:"type",q:"Correct the sentence: <b>This is the house that I grew up in it.</b>",a:["This is the house that I grew up in.","This is the house which I grew up in.","This is the house I grew up in.","This is the house in which I grew up.","This is the house where I grew up."],h:"Delete the extra pronoun.",e:"Possible corrections: <i>the house (that) I grew up in</i>, <i>the house in which I grew up</i>, <i>the house where I grew up</i>."},
+ {t:"mc",q:"He passed the exam, ___ surprised everyone.",o:["that","what","which","who"],a:2,h:"The relative refers to the whole preceding clause.",e:"A comment on the whole previous clause needs <b>which</b> after a comma. <i>That</i> cannot follow a comma."},
+ {t:"mc",q:"All ___ you need is patience.",o:["what","that","which","whom"],a:1,h:"All + relative clause.",e:"After <i>all, everything, nothing</i> we use <b>that</b> (or zero): <i>All (that) you need</i>. <i>What</i> already contains its own antecedent."},
+ {t:"gap",q:"The man ___ car was stolen reported it to the police.",a:["whose"],h:"Possessive relative.",e:"<b>whose</b> car: it links a person to something he owns."},
+ {t:"type",q:"Shorten the sentence by cutting down the relative clause: <b>The people who are waiting outside are journalists.</b>",a:["The people waiting outside are journalists."],h:"Drop <i>who are</i>.",e:"<i>The people waiting outside…</i> A present participle replaces <i>who are + -ing</i>."}
+ ]},
+{ id:"tenses", title:"Perfect tenses & time clauses", tag:"Tense",
+ alert:"Hebrew has no present perfect and uses the future after <i>when/before/as soon as</i>. Typical errors: <i>I live here since 2010</i>, <i>I am knowing her</i>, <i>When I will arrive, I will call</i>.",
+ rules:[
+  "<b>since/for</b> + a state or activity continuing up to now needs the <b>present perfect</b> (simple or continuous): <i>I have lived here since 2010.</i>",
+  "A <b>finished-time</b> expression (<i>yesterday, in 2019, last week</i>) needs the past simple.",
+  "<b>Verbs of state</b> (know, believe, belong) are not used in continuous forms in this sense.",
+  "After <b>when, as soon as, before, until, once, if</b>, use the present (or present perfect) for the future: <i>I'll call you when I arrive.</i>",
+  "<b>Future continuous / future perfect</b> for temporary or completed-by-then actions."],
+ contrast:[["I live here since 2010.","I have lived here since 2010."],["Yesterday I have seen him.","Yesterday I saw him."],["When I will arrive, I will call.","When I arrive, I'll call."]],
+ items:[
+ {t:"mc",q:"She ___ in Haifa since 2015.",o:["lives","is living","has lived","lived"],a:2,h:"<i>Since</i> links a past point to the present.",e:"<b>has lived</b> (or <i>has been living</i>). The present simple cannot be used with <i>since</i>."},
+ {t:"spot",q:"Which sentence contains an error?",o:["I'll call you as soon as I arrive.","By the time you read this, I will have left.","I will let you know when I will have more information.","If it rains tomorrow, we will cancel the trip."],a:2,h:"Look at the verb after <i>when</i>.",e:"<i>I will let you know when I have more information.</i> No <i>will</i> in a time clause."},
+ {t:"gap",q:"We ___ (wait) for over an hour when the bus finally came.",a:["had been waiting"],h:"Duration up to a past moment: past perfect continuous.",e:"<b>had been waiting</b>: an activity in progress, with duration, before a past event."},
+ {t:"mc",q:"I ___ him yesterday at the conference.",o:["have seen","saw","have been seeing","had seen"],a:1,h:"<i>Yesterday</i> is a finished time.",e:"Past simple <b>saw</b>. The present perfect is incompatible with a specified finished time."},
+ {t:"type",q:"Correct the sentence: <b>I am knowing her since childhood.</b>",a:["I have known her since childhood.","I have known her since I was a child.","I've known her since childhood.","I've known her since I was a child."],h:"<i>Know</i> describes a state, not an action, so it is not used with -ing here; and <i>since</i> needs a perfect form.",e:"<i>I have known her since childhood.</i>"},
+ {t:"mc",q:"This time next week, I ___ on a beach.",o:["will lie","will be lying","am lying","will have lain"],a:1,h:"Action in progress at a future moment.",e:"<b>will be lying</b>: future continuous."}
+ ]},
+{ id:"prepositions", title:"Dependent prepositions", tag:"Word partners",
+ alert:"Hebrew verbs take different prepositions from English ones. Common transfers: <i>discuss about, marry with, enter to, reach to, emphasise on, affect on, depend from</i>.",
+ rules:[
+  "<b>No preposition</b>: discuss, marry, enter, reach, approach, resemble, emphasise, mention, answer (a question).",
+  "<b>Fixed prepositions</b>: depend <i>on</i>, consist <i>of</i>, differ <i>from</i>, accuse <i>of</i>, congratulate <i>on</i>, insist <i>on</i>.",
+  "<b>Noun + preposition</b>: effect <i>on</i>, solution <i>to</i>, reason <i>for</i>, influence <i>on/over</i>, access <i>to</i>.",
+  "Learn them as <b>chunks</b>, not as translations."],
+ contrast:[["She married with a physician.","She married a physician."],["We discussed about the budget.","We discussed the budget."],["It depends from the weather.","It depends on the weather."]],
+ items:[
+ {t:"spot",q:"Which sentence contains an error?",o:["We need to discuss the budget.","She married with a physician.","He entered the room quietly.","They approached the border at dawn."],a:1,h:"One verb never takes <i>with</i> in this meaning.",e:"<i>She married a physician.</i> (<i>She got married to</i> is also possible.)"},
+ {t:"mc",q:"The outcome will depend ___ several factors.",o:["from","of","on","to"],a:2,h:"Fixed word combination.",e:"<b>depend on</b>."},
+ {t:"mc",q:"Which version is correct?",o:["The report emphasised on the need for reform.","The report emphasised the need for reform.","The report emphasised about the need for reform.","The report emphasised at the need for reform."],a:1,h:"No preposition after this verb.",e:"<b>emphasise</b> takes its object directly, with no preposition: <i>emphasised the need</i>."},
+ {t:"gap",q:"This approach differs ___ the one we used before.",a:["from"],h:"<i>Differ</i> + ?",e:"<b>differ from</b> (and <i>different from</i>; <i>different to</i> is informal British, <i>different than</i> informal American)."},
+ {t:"gap",q:"The new law will have a significant effect ___ small businesses.",a:["on"],h:"Effect + ?",e:"<b>effect on</b>."},
+ {t:"mc",q:"She was accused ___ fraud.",o:["for","with","from","of"],a:3,h:"Fixed word combination.",e:"<b>accuse someone of</b> something; compare <i>charge someone with</i>."}
+ ]},
+{ id:"inversion", title:"Emphasis: changing word order", tag:"Emphasis",
+ alert:"Hebrew word order is flexible, and Hebrew does not move the helping verb in front of the subject for emphasis, so learners often write <i>Never I have seen</i>. When a sentence starts with a negative or limiting expression such as <i>never</i> or <i>rarely</i>, English <b>puts the helping verb before the subject</b>.",
+ rules:[
+  "<b>Negative or limiting words at the start</b> of a sentence change the word order: <i>never, rarely, seldom, hardly… when, no sooner… than, not only, only after/when/if, under no circumstances, little</i>.",
+  "<b>Helping verb + subject + main verb</b>: <i>Rarely have I seen…</i> (if there is no helping verb, add <i>do/does/did</i>: <i>Little did he know.</i>).",
+  "<b>So/Such</b> at the start: <i>So severe was the storm that…</i>",
+  "<b>Conditionals without <i>if</i></b> (formal): <i>Had I known…, Should you need…, Were he to resign…</i>"],
+ contrast:[["Never I have felt so humiliated.","Never have I felt so humiliated."],["Not only he was late…","Not only was he late…"],["If you should need help…","Should you need help…"]],
+ items:[
+ {t:"mc",q:"Rarely ___ such dedication.",o:["I have seen","have I seen","I saw","did I saw"],a:1,h:"The sentence starts with a negative word.",e:"<b>Rarely have I seen</b> such dedication. The helping verb comes before the subject."},
+ {t:"type",q:"Rewrite beginning with <b>Barely</b> or <b>Hardly</b>: <b>I had barely sat down when the phone rang.</b>",a:["Barely had I sat down when the phone rang.","Hardly had I sat down when the phone rang.","Scarcely had I sat down when the phone rang."],h:"Barely + <i>had</i> + subject + past participle.",e:"<i>Barely had I sat down when the phone rang.</i>"},
+ {t:"mc",q:"Not only ___ late, but he also forgot the documents.",o:["he was","was he","did he was","he did"],a:1,h:"The verb <i>be</i> goes straight before the subject.",e:"<b>Not only was he late</b>… <i>be</i> as main verb moves before the subject."},
+ {t:"spot",q:"Which sentence contains an error?",o:["Under no circumstances should the door be left unlocked.","Only after the results were published did the scandal emerge.","Never I have felt so humiliated.","So severe was the storm that flights were cancelled."],a:2,h:"Check each sentence that starts with a negative or limiting word.",e:"<i>Never have I felt so humiliated.</i>"},
+ {t:"gap",q:"Had it not been for your help, we ___ failed.",a:["would have","could have","might have"],h:"Third conditional result.",e:"<b>would have failed</b> (could/might also possible). <i>Had it not been for</i> = <i>If it hadn't been for</i>."},
+ {t:"type",q:"Rewrite more formally, without <i>if</i>: <b>If you should need any assistance, please contact us.</b>",a:["Should you need any assistance, please contact us."],h:"Delete <i>if</i> and move <i>should</i>.",e:"<i>Should you need any assistance, please contact us.</i>"}
+ ]},
+{ id:"conditionals", title:"Conditionals, wishes & demands", tag:"Mood",
+ alert:"Hebrew uses a future form after <i>if</i> and has no separate verb form for these meanings. This leads to <i>If I would know</i>, <i>I wish I will…</i>, and <i>She insisted that he submits</i>.",
+ rules:[
+  "<b>No would in the if-clause</b>: <i>If I had known, I would have told you.</i>",
+  "<b>Wish / if only</b>: present → past (<i>I wish I knew</i>); past → past perfect (<i>I wish I hadn't said</i>); future/annoyance → <i>would</i>.",
+  "<b>Base form of the verb</b> after insist, demand, recommend, propose, essential…: <i>that he submit</i> (no <i>-s</i>, no <i>will</i>).",
+  "<b>It's (high) time / would rather</b> + past form: <i>It's time we left. I'd rather you didn't.</i>",
+  "<b>Mixed conditionals</b>: <i>If I had studied medicine, I would be a doctor now.</i>"],
+ contrast:[["If I would know, I would tell you.","If I knew, I would tell you."],["I wish I will have more time.","I wish I had more time."],["He insisted that she goes.","He insisted that she go."]],
+ items:[
+ {t:"mc",q:"If I ___ you, I would accept the offer.",o:["was","am","were","would be"],a:2,h:"Formal hypothetical form of <i>be</i>.",e:"<b>were</b> is the standard form for imagined situations; <i>was</i> is common in informal speech."},
+ {t:"gap",q:"I wish I ___ (not / say) that at the meeting.",a:["hadn't said","had not said"],h:"Regret about the past.",e:"<b>hadn't said</b>: wish + past perfect."},
+ {t:"mc",q:"The committee insisted that he ___ the report by Friday.",o:["submits","submit","will submit","submitted"],a:1,h:"Base form of the verb, no <i>-s</i>.",e:"<b>submit</b>: base form with no <i>-s</i>. (<i>should submit</i> is the British alternative.)"},
+ {t:"spot",q:"Which sentence contains an error?",o:["If he were to resign, the board would have to act.","Had I known, I would have told you.","If I would have known, I would have told you.","Were it not for his support, the firm would be bankrupt by now."],a:2,h:"Check the if-clause.",e:"<i>If I had known, I would have told you.</i> No <i>would have</i> in the if-clause."},
+ {t:"gap",q:"It's high time we ___ (address) this problem.",a:["addressed"],h:"<i>It's high time</i> takes a past-form verb with present meaning.",e:"<b>addressed</b>: the past form signals that the action is overdue."},
+ {t:"mc",q:"I'd rather you ___ smoke in here.",o:["don't","didn't","won't","wouldn't"],a:1,h:"<i>Would rather</i> + a different subject.",e:"<b>didn't</b>: past form expressing present preference."}
+ ]},
+{ id:"patterns", title:"Verb patterns", tag:"What follows the verb",
+ alert:"Hebrew says <i>I want that he will come</i> and uses a similar structure for many verbs. English lets each verb choose between <b>to + verb, verb without to, and verb + -ing</b>.",
+ rules:[
+  "<b>want / expect / ask / allow / advise</b> + <i>object + to + verb</i>: <i>She wants me to go.</i> Never <i>want that I…</i>.",
+  "<b>let / make / have</b> + object + <b>verb without <i>to</i></b>: <i>She let me use it.</i> Passive of <i>make</i> restores <i>to</i>.",
+  "<b>-ing only</b>: enjoy, avoid, suggest, deny, risk, consider, postpone, admit, mind.",
+  "<b>Meaning changes</b>: remember/forget/stop/try + <i>to</i> vs <i>-ing</i>.",
+  "<b>to + -ing</b>: look forward to, be used to, object to, committed to."],
+ contrast:[["She wants that I will go.","She wants me to go."],["She let me to use her laptop.","She let me use her laptop."],["He suggested to postpone.","He suggested postponing."]],
+ items:[
+ {t:"mc",q:"She wants ___ with her.",o:["that I will go","me to go","I go","me go"],a:1,h:"Object + <i>to</i> + verb.",e:"<b>wants me to go</b>."},
+ {t:"gap",q:"I look forward to ___ (hear) from you.",a:["hearing"],h:"<i>To</i> here is a preposition.",e:"<b>hearing</b>: look forward to + -ing."},
+ {t:"mc",q:"He suggested ___ the meeting until next week.",o:["to postpone","postponing","us to postpone","that we to postpone"],a:1,h:"<i>Suggest</i> never takes <i>to</i> + verb.",e:"<b>suggested postponing</b> (or <i>that we postpone</i>)."},
+ {t:"spot",q:"Which sentence contains an error?",o:["They made him sign the contract.","She let me to use her laptop.","We were made to wait outside.","He is said to have left the country."],a:1,h:"Check <i>let</i>.",e:"<i>She let me use her laptop.</i> After <i>let</i> the verb has no <i>to</i>."},
+ {t:"mc",q:"I remember ___ the door, so it can't have been me who left it open.",o:["to lock","locking","lock","to have lock"],a:1,h:"Memory of a past action.",e:"<b>remember + -ing</b> = recall an earlier action; <i>remember to lock</i> = not forget a duty."},
+ {t:"mc",q:"After years abroad, she still hasn't got used to ___ on the left.",o:["drive","to drive","driving","drove"],a:2,h:"<i>Used to</i> + ? (not the habitual form).",e:"<b>get used to + -ing</b>."}
+ ]},
+{ id:"nouns", title:"Uncountables & quantifiers", tag:"Nouns",
+ alert:"Several words that are uncountable in English are countable in Hebrew: <i>advice, information, research, equipment, furniture, news, evidence</i>. Learners write <i>advices, informations, researches</i>.",
+ rules:[
+  "<b>Uncountable</b>: advice, information, research, evidence, equipment, furniture, luggage, news, progress, knowledge. Use <i>a piece of / an item of / a bit of</i>.",
+  "<b>much / little / less / amount of</b> + uncountable; <b>many / few / fewer / number of</b> + plural.",
+  "<b>Collective nouns</b> (staff, police, team) often take plural verbs in British English.",
+  "<b>Each / every / neither / either</b> are singular in formal usage."],
+ contrast:[["She gave me some good advices.","She gave me some good advice."],["Her researches were published.","Her research was published."],["A large amount of students.","A large number of students."]],
+ items:[
+ {t:"spot",q:"Which sentence contains an error?",o:["She gave me some valuable advice.","We received several informations.","The staff are on strike.","The news was devastating."],a:1,h:"One noun cannot be pluralised.",e:"<i>We received several pieces of information</i> / <i>a lot of information</i>."},
+ {t:"mc",q:"A large ___ of students failed the exam.",o:["amount","number","deal","quantity"],a:1,h:"Students are countable.",e:"<b>number</b> + plural countable; <i>amount</i> + uncountable."},
+ {t:"mc",q:"There is ___ evidence to support the claim.",o:["few","a few","little","many"],a:2,h:"<i>Evidence</i> is uncountable and the sense is negative.",e:"<b>little</b> evidence (almost none). <i>A little</i> would be mildly positive."},
+ {t:"type",q:"Correct the sentence: <b>Her researches have been published in several journals.</b>",a:["Her research has been published in several journals.","Her studies have been published in several journals.","Her pieces of research have been published in several journals.","Her research papers have been published in several journals."],h:"Uncountable noun and its verb agreement.",e:"<i>Her research has been published…</i>"},
+ {t:"gap",q:"Could you give me two ___ of advice?",a:["pieces","bits","words"],h:"Unit noun.",e:"<b>pieces / bits / words</b> of advice."},
+ {t:"mc",q:"Each of the students ___ required to submit a portfolio.",o:["are","is","were","have been"],a:1,h:"The subject of the clause is <i>each</i>.",e:"<b>is</b>: <i>each</i> is singular."}
+ ]},
+{ id:"reporting", title:"Reporting speech & 'have something done'", tag:"Voice",
+ alert:"Hebrew keeps the original tense in reported speech (<i>He said he will come</i>) and has an impersonal 'they say' form. English moves the verb one step back in time (<i>will</i> → <i>would</i>) and uses <b>reporting passives</b> (<i>is said to have…</i>).",
+ rules:[
+  "<b>Move the verb one step back</b> after a past reporting verb: will → would, can → could, present → past.",
+  "<b>Reporting passives</b>: <i>People believe that X has…</i> → <i>X is believed to have…</i>",
+  "<b>Reporting verbs have patterns</b>: deny/admit + -ing; claim/promise + <i>to</i> + verb; accuse + of -ing.",
+  "<b>Have/get something done</b>: <i>I had my car repaired.</i> (=someone did it for me)"],
+ contrast:[["She said she will come tomorrow.","She said she would come the next day."],["It is believed him to be abroad.","He is believed to be abroad."],["I repaired my car at the garage.","I had my car repaired at the garage."]],
+ items:[
+ {t:"mc",q:"She said she ___ the next day.",o:["will come","would come","comes","is coming"],a:1,h:"Reporting verb is past.",e:"<b>would come</b>: <i>will</i> becomes <i>would</i> after a past reporting verb."},
+ {t:"type",q:"Rewrite as a reporting passive beginning <b>The mayor</b>: <b>People believe that the mayor has resigned.</b>",a:["The mayor is believed to have resigned.","The mayor is thought to have resigned.","The mayor is said to have resigned.","The mayor is reported to have resigned.","The mayor is understood to have resigned."],h:"Passive + <i>to have</i> + past participle.",e:"<i>The mayor is believed to have resigned.</i>"},
+ {t:"mc",q:"He denied ___ the files.",o:["to delete","deleting","delete","that to delete"],a:1,h:"Verb pattern.",e:"<b>deny + -ing</b>."},
+ {t:"spot",q:"Which sentence contains an error?",o:["It is alleged that the company falsified its accounts.","The company is alleged falsifying its accounts.","The company is alleged to have falsified its accounts.","The company has been accused of falsifying its accounts."],a:1,h:"Check the form after <i>alleged</i>.",e:"<i>The company is alleged to have falsified…</i>"},
+ {t:"gap",q:"I had my car ___ (repair) last week.",a:["repaired"],h:"Have + object + past participle.",e:"<b>had my car repaired</b>: have + object + past participle."},
+ {t:"mc",q:"She ___ her wallet stolen on the train.",o:["did","made","had","was"],a:2,h:"Experience, not instruction.",e:"<b>had her wallet stolen</b>: this <i>have</i> pattern can also describe unfortunate things that happen to us."}
+ ]},
+{ id:"register", title:"Formal subjects, emphasis & register", tag:"Style",
+ alert:"Hebrew allows subjectless clauses (<i>Important to understand…</i>) and rarely uses an <i>It was… that…</i> structure for emphasis. English needs <b>it / there</b> as an empty subject and has special structures for emphasis. Register choices also matter at C2.",
+ rules:[
+  "<b>It + be + adjective + that / to</b>: <i>It is essential to understand…</i>",
+  "<b>There</b> to say that something exists: <i>There remains little doubt…</i>",
+  "<b>Emphasis with <i>It was… that…</i></b>: <i>It was the lack of funding that caused the delay.</i>",
+  "<b>Emphasis with <i>What… is…</i></b>: <i>What I need is a quiet place.</i>",
+  "<b>Formal register</b>: prefer one formal verb to a verb + particle (tolerate, investigate, postpone)."],
+ contrast:[["Is essential to understand the context.","It is essential to understand the context."],["The lack of funding caused the delay.","It was the lack of funding that caused the delay."],["put up with","tolerate"]],
+ items:[
+ {t:"mc",q:"___ is widely acknowledged that urban planning requires long-term vision.",o:["It","This","There","That"],a:0,h:"The sentence needs an empty subject first.",e:"<b>It is widely acknowledged that…</b>"},
+ {t:"type",q:"Correct the sentence: <b>Is essential to understand the context.</b>",a:["It is essential to understand the context."],h:"Add a missing subject.",e:"<i>It is essential to understand the context.</i>"},
+ {t:"type",q:"Rewrite to emphasise the cause: <b>The lack of funding caused the delay.</b> Begin: <i>It was…</i>",a:["It was the lack of funding that caused the delay.","It was the lack of funding which caused the delay."],h:"It was + focus + that…",e:"<i>It was the lack of funding that caused the delay.</i>"},
+ {t:"mc",q:"___ I need is a quiet place to think.",o:["That","Which","What","All what"],a:2,h:"What + clause + is…",e:"<b>What I need is…</b> Compare <i>All (that) I need is…</i>"},
+ {t:"spot",q:"Which sentence contains an error?",o:["There remains little doubt that the policy failed.","It seems that there is no easy solution.","It is appeared that no easy solution exists.","What matters is how the data are interpreted."],a:2,h:"Check the verb <i>appear</i>.",e:"<i>It appears that…</i> (<i>appear</i> is not used in the passive)."},
+ {t:"mc",q:"She refused to put up with such behaviour. The most formal equivalent of <i>put up with</i> is…",o:["tolerate","handle","take on","look after"],a:0,h:"Single formal verb.",e:"<b>tolerate</b>."}
+ ]}
+];
+
+const HE = {
+articles:{
+ alert:"בעברית יש רק ה' הידיעה (<i>ha-</i>) ואין סימן לשם עצם סתמי (a/an). לכן טועים בשני כיוונים: משמיטים a/an לפני שם עצם בודד שאפשר לספור (<i>She is teacher</i>), ומוסיפים <i>the</i> לשמות כלליים ומופשטים (<i>The life is short</i>).",
+ rules:["<b>בלי ה' הידיעה</b> לשמות עצם כלליים ברבים ולשמות שאי אפשר לספור: <i>Nature inspires poets. Honesty matters.</i>","<b>a/an</b> לכל שם עצם בודד שנספר ואינו מזוהה, כולל מקצועות ותפקידים: <i>She is an interpreter. Such a view. What a mess.</i>","<b>the</b> למשהו מזוהה או יחיד מסוגו, לצורת השוואה עליונה ולמילים <i>only / same / first</i>: <i>the only person, the most qualified.</i>","ביטויים של מוסדות משנים משמעות: <i>in hospital</i> (כחולה) לעומת <i>in the hospital</i> (הבניין)."],
+ h:["האם זו קביעה כללית על שם מופשט?","חפשו שם כללי עם <i>the</i> מיותר.","מקצוע הוא שם עצם בודד שנספר. שימו לב לצליל של המילה הבאה.","בעברית משתמשים במבנה של שייכות; באנגלית משתמשים ב-a.","הסימן בא אחרי <i>such</i> ולפני שם התואר. בדקו את הצליל של <i>remarkable</i>.","מילה אחת צריכה לצאת."],
+ e:["שם עצם מופשט שאי אפשר לספור, כשמדברים בכלליות, בא <b>בלי ה' הידיעה</b>. <i>The unemployment</i> דורש הגדרה נוספת, למשל <i>the unemployment in this region</i>.","<i>Nature</i> כאן כללי, ולכן: <i>Nature has always inspired poets.</i> גם תפקיד יחיד אחרי <i>elect</i> (<i>president</i>) בא בלי ה' הידיעה.","<b>an</b> interpreter: שם עצם בודד שנספר צריך a/an, והמילה מתחילה בצליל תנועה.","<i>a</i> terrible headache. מחלות כמו <i>a cold, a headache</i> באות עם <i>a</i> (אבל <i>flu, measles</i> בלי).","<i>such a</i> + שם תואר + שם עצם בודד. <i>Remarkable</i> מתחילה בצליל עיצור, ולכן <b>a</b>.","<i>Patience is a virtue.</i> שם מופשט כללי, בלי the."]},
+relatives:{
+ alert:"במשפטי זיקה בעברית (<i>she-</i>) מוסיפים לעיתים כינוי נוסף שחוזר על שם העצם: <i>the man that I spoke with him</i>. באנגלית משאירים 'חור' ולא חוזרים על הכינוי. גם הצירוף 'כל מה ש…' גורם לטעות <i>all what</i>.",
+ rules:["<b>לא חוזרים</b> על שם העצם בכינוי: <i>the report that I read</i>, <b class='not'>NOT</b> <i>that I read it</i>.","מילת היחס נשארת בסוף המשפט (לשון יומיומית) או עוברת לפני <i>whom/which</i> (לשון רשמית): <i>the colleague I work with / with whom I work.</i>","<b>whose</b> במקום שייכות; <b>which</b> אחרי פסיק יכול להתייחס לכל המשפט: <i>He passed, which surprised everyone.</i>","אחרי <i>all, everything, something, nothing, the only</i> משתמשים ב-<b>that</b>, לא ב-<i>what</i>.","אפשר לקצר: <i>the people who are waiting</i><span class='arrow'> → </span><i>the people waiting</i>."],
+ h:["חפשו כינוי שחוזר על המושא.","מחקו את הכינוי המיותר.","הכינוי מתייחס לכל המשפט שלפניו.","all + משפט זיקה.","זיקה של שייכות.","מחקו את <i>who are</i>."],
+ e:["<i>The method which we used was unreliable.</i> כינוי הזיקה כבר מייצג את המושא, ולכן <i>it</i> מיותר.","תיקונים אפשריים: <i>the house (that) I grew up in</i>, <i>the house in which I grew up</i>, <i>the house where I grew up</i>.","משפט זיקה שמתייחס לכל המשפט שלפניו דורש <b>which</b> אחרי פסיק. אחרי פסיק לא משתמשים ב-<i>that</i>.","אחרי <i>all, everything, nothing</i> משתמשים ב-<b>that</b> (או בלי מילה): <i>All (that) you need</i>. המילה <i>what</i> לא מתאימה כשיש שם עצם או כינוי לפניה.","<b>whose</b> car: מקשר בין אדם לדבר ששייך לו.","<i>The people waiting outside…</i> צורת -ing מחליפה את <i>who are + -ing</i>."]},
+tenses:{
+ alert:"בעברית אין הווה-שלם (present perfect), ואחרי 'כש-', 'לפני ש-', 'ברגע ש-' משתמשים בעתיד. לכן כותבים בטעות <i>I live here since 2010</i>, <i>I am knowing her</i>, <i>When I will arrive, I will call</i>.",
+ rules:["<b>since/for</b> עם מצב או פעולה שנמשכים עד עכשיו דורשים <b>present perfect</b> (רגיל או continuous): <i>I have lived here since 2010.</i>","עם ביטוי זמן שהסתיים (<i>yesterday, in 2019, last week</i>) משתמשים ב-past simple.","<b>פעלי מצב</b> (know, believe, belong) לא באים בצורת continuous במשמעות הזו.","אחרי <b>when, as soon as, before, until, once, if</b> משתמשים בהווה (או ב-present perfect) כדי לדבר על העתיד: <i>I'll call you when I arrive.</i>","<b>future continuous / future perfect</b> לפעולה שתהיה באמצעה, או שתסתיים, עד זמן מסוים בעתיד."],
+ h:["<i>Since</i> מחבר נקודה בעבר להווה.","הסתכלו על הפועל אחרי <i>when</i>.","משך זמן עד רגע בעבר: past perfect continuous.","<i>Yesterday</i> הוא זמן שהסתיים.","<i>know</i> הוא פועל מצב, ו-<i>since</i> דורש צורת perfect.","פעולה שמתרחשת ברגע מסוים בעתיד."],
+ e:["<b>has lived</b> (או <i>has been living</i>). הווה פשוט לא בא עם <i>since</i>.","<i>I will let you know when I have more information.</i> אין <i>will</i> במשפט זמן.","<b>had been waiting</b>: פעולה שנמשכה, עם משך זמן, לפני אירוע בעבר.","past simple: <b>saw</b>. present perfect לא מתאים לזמן מוגדר שהסתיים.","<i>I have known her since childhood.</i> (<i>know</i> הוא פועל מצב, ו-<i>since</i> דורש צורת perfect.)","<b>will be lying</b>: future continuous."]},
+prepositions:{
+ alert:"פעלים בעברית לוקחים מילות יחס שונות מאלה שבאנגלית. טעויות נפוצות: <i>discuss about, marry with, enter to, reach to, emphasise on, affect on, depend from</i>.",
+ rules:["<b>בלי מילת יחס</b>: discuss, marry, enter, reach, approach, resemble, emphasise, mention, answer (a question).","<b>מילות יחס קבועות</b>: depend <i>on</i>, consist <i>of</i>, differ <i>from</i>, accuse <i>of</i>, congratulate <i>on</i>, insist <i>on</i>.","<b>שם עצם + מילת יחס</b>: effect <i>on</i>, solution <i>to</i>, reason <i>for</i>, influence <i>on/over</i>, access <i>to</i>.","כדאי ללמוד אותם כ<b>צירופים</b>, לא כתרגום מילה במילה."],
+ h:["פועל אחד אף פעם לא לוקח <i>with</i> במשמעות הזו.","צירוף קבוע.","פועל יוצא ישיר.","<i>Differ</i> + ?","Effect + ?","צירוף קבוע."],
+ e:["<i>She married a physician.</i> (גם <i>She got married to</i> אפשרי.)","<b>depend on</b>.","<b>emphasise</b> הוא פועל יוצא ישיר: <i>emphasised the need</i>.","<b>differ from</b> (וגם <i>different from</i>; <i>different to</i> לא רשמי בבריטית, <i>different than</i> לא רשמי באמריקאית).","<b>effect on</b>.","<b>accuse someone of</b> something; השוו <i>charge someone with</i>."]},
+inversion:{
+ alert:"בעברית סדר המילים גמיש, ואין מעבר של פועל העזר לפני הנושא לצורך הדגשה, ולכן כותבים <i>Never I have seen</i>. באנגלית, כשהמשפט מתחיל במילה שלילית או מגבילה כמו <i>never</i> או <i>rarely</i>, <b>פועל העזר בא לפני הנושא</b>.",
+ rules:["<b>מילים שליליות או מגבילות בתחילת המשפט</b> משנות את סדר המילים: <i>never, rarely, seldom, hardly… when, no sooner… than, not only, only after/when/if, under no circumstances, little</i>.","<b>פועל עזר + נושא + פועל</b>: <i>Rarely have I seen…</i> (אם אין פועל עזר, משתמשים ב-<i>do/does/did</i>: <i>Little did he know.</i>)","<b>So/Such</b> בראש המשפט: <i>So severe was the storm that…</i>","<b>תנאי בלי if</b> (לשון רשמית): <i>Had I known…, Should you need…, Were he to resign…</i>"],
+ h:["המשפט מתחיל במילה שלילית.","Barely + פועל עזר + נושא + צורה שלישית של הפועל.","הפועל <i>be</i> עובר ישר לפני הנושא.","בדקו כל משפט שמתחיל במילה שלילית או מגבילה.","תוצאה בתנאי מסוג שלישי.","מחקו את <i>if</i> והעבירו את <i>should</i> לתחילת המשפט."],
+ e:["<b>Rarely have I seen</b> such dedication. פועל העזר לפני הנושא.","<i>Barely had I sat down when the phone rang.</i>","<b>Not only was he late</b>… הפועל <i>be</i> עובר ישר לפני הנושא.","<i>Never have I felt so humiliated.</i>","<b>would have failed</b> (גם could/might אפשריים). <i>Had it not been for</i> = <i>If it hadn't been for</i>.","<i>Should you need any assistance, please contact us.</i>"]},
+conditionals:{
+ alert:"בעברית משתמשים בעתיד אחרי 'אם', ואין צורת פועל נפרדת למשמעויות האלה. לכן כותבים <i>If I would know</i>, <i>I wish I will…</i>, <i>She insisted that he submits</i>.",
+ rules:["<b>אין would במשפט ה-if</b>: <i>If I had known, I would have told you.</i>","<b>Wish / if only</b>: משאלה על ההווה ← past (<i>I wish I knew</i>); משאלה על העבר ← past perfect (<i>I wish I hadn't said</i>); על העתיד או על תסכול ← <i>would</i>.","<b>צורת הבסיס של הפועל</b> אחרי פעלי דרישה (insist, demand, recommend, propose, essential…): <i>that he submit</i> (בלי -s ובלי will).","<b>It's (high) time / would rather</b> + צורת עבר: <i>It's time we left. I'd rather you didn't.</i>","<b>תנאי מעורב</b>: <i>If I had studied medicine, I would be a doctor now.</i>"],
+ h:["צורה רשמית של <i>be</i> בהשערה.","חרטה על העבר.","צורת הבסיס של הפועל, בלי <i>-s</i>.","בדקו את משפט ה-if.","<i>It's high time</i> לוקח פועל בצורת עבר עם משמעות של הווה.","<i>Would rather</i> + נושא אחר."],
+ e:["<b>were</b> היא הצורה התקנית למצב דמיוני; <i>was</i> נפוץ בלשון דיבור.","<b>hadn't said</b>: wish + past perfect.","<b>submit</b>: צורת בסיס בלי <i>-s</i>. (<i>should submit</i> היא החלופה הבריטית.)","<i>If I had known, I would have told you.</i> אין <i>would have</i> במשפט ה-if.","<b>addressed</b>: צורת העבר מסמנת שהפעולה כבר מתעכבת.","<b>didn't</b>: צורת עבר שמבטאת העדפה בהווה."]},
+patterns:{
+ alert:"בעברית אומרים 'אני רוצה שהוא יבוא'. באנגלית כל פועל בוחר <b>to + פועל, פועל בלי to או -ing</b> לפי המילה עצמה, ולכן צריך ללמוד את התבנית של כל פועל.",
+ rules:["<b>want / expect / ask / allow / advise</b> + מושא + to: <i>She wants me to go.</i> אף פעם לא <i>want that I…</i>.","<b>let / make / have</b> + מושא + <b>פועל בלי to</b>: <i>She let me use it.</i> בסביל של <i>make</i> חוזר <i>to</i>.","<b>רק -ing</b>: enjoy, avoid, suggest, deny, risk, consider, postpone, admit, mind.","<b>המשמעות משתנה</b>: remember/forget/stop/try + <i>to</i> לעומת <i>-ing</i>.","<b>to + -ing</b> (כאן to היא מילת יחס): look forward to, be used to, object to, committed to."],
+ h:["מושא + to.","<i>to</i> כאן היא מילת יחס.","<i>Suggest</i> לא לוקח to + פועל.","בדקו את <i>let</i>.","זיכרון של פעולה שכבר קרתה.","<i>Used to</i> + ? (לא הצורה של הרגל בעבר)."],
+ e:["<b>wants me to go</b>.","<b>hearing</b>: look forward to + -ing.","<b>suggested postponing</b> (או <i>that we postpone</i>).","<i>She let me use her laptop.</i> אחרי <i>let</i> בא פועל בלי to.","<b>remember + -ing</b> = להיזכר בפעולה שקרתה; <i>remember to lock</i> = לא לשכוח לעשות.","<b>get used to + -ing</b>."]},
+nouns:{
+ alert:"כמה מילים שאי אפשר לספור באנגלית ניתנות לספירה בעברית: <i>advice, information, research, equipment, furniture, news, evidence</i>. לכן כותבים <i>advices, informations, researches</i>.",
+ rules:["<b>שמות שאי אפשר לספור</b>: advice, information, research, evidence, equipment, furniture, luggage, news, progress, knowledge. אומרים <i>a piece of / an item of / a bit of</i>.","<b>much / little / less / amount of</b> + שם שאי אפשר לספור; <b>many / few / fewer / number of</b> + רבים.","<b>שמות קיבוציים</b> (staff, police, team) לרוב לוקחים פועל ברבים באנגלית בריטית.","<b>Each / every / neither / either</b> הם ביחיד בלשון רשמית."],
+ h:["שם עצם אחד לא מקבל רבים.","Students ניתנים לספירה.","<i>Evidence</i> לא נספר, והמשמעות שלילית.","שם שאי אפשר לספור, והתאמת הפועל.","מילת יחידה.","הנושא הוא <i>each</i>."],
+ e:["<i>We received several pieces of information</i> / <i>a lot of information</i>.","<b>number</b> + רבים; <i>amount</i> + שם שאי אפשר לספור.","<b>little</b> evidence (כמעט אין). <i>A little</i> היה נשמע חיובי יותר.","<i>Her research has been published…</i>","<b>pieces / bits / words</b> of advice.","<b>is</b>: <i>each</i> הוא ביחיד."]},
+reporting:{
+ alert:"בעברית שומרים על הזמן המקורי בדיבור עקיף ('הוא אמר שהוא יבוא') ויש צורה סתמית ('אומרים ש…'). באנגלית הפועל זז צעד אחד אחורה בזמן (<i>will</i><span class='arrow'> → </span><i>would</i>), ומשתמשים ב<b>סביל לדיווח</b> (<i>is said to have…</i>).",
+ rules:["<b>הפועל זז צעד אחד אחורה</b> אחרי פועל דיווח בעבר: will<span class='arrow'> → </span>would, can<span class='arrow'> → </span>could, הווה<span class='arrow'> ← </span>עבר.","<b>סביל לדיווח</b>: <i>People believe that X has…</i><span class='arrow'> → </span><i>X is believed to have…</i>","<b>לפעלי דיווח יש תבניות</b>: deny/admit + -ing; claim/promise + to; accuse + of -ing.","<b>have/get + מושא + צורה שלישית</b>: <i>I had my car repaired.</i> (מישהו אחר עשה את זה בשבילי)"],
+ h:["פועל הדיווח בעבר.","סביל + <i>to have</i> + צורה שלישית.","התבנית של הפועל.","בדקו את הצורה אחרי <i>alleged</i>.","have + מושא + צורה שלישית.","חוויה, לא הוראה."],
+ e:["<b>would come</b>: <i>will</i> הופך ל-<i>would</i> אחרי פועל דיווח בעבר.","<i>The mayor is believed to have resigned.</i>","<b>deny + -ing</b>.","<i>The company is alleged to have falsified…</i>","<b>had my car repaired</b>: have + מושא + צורה שלישית.","<b>had her wallet stolen</b>: גם המבנה הזה יכול לתאר דבר לא נעים שקרה לנו."]},
+register:{
+ alert:"בעברית אפשר להשמיט נושא ('חשוב להבין…') ובדרך כלל לא משתמשים במבנה <i>It was… that…</i> כדי להדגיש. באנגלית צריך <b>it / there</b> כנושא 'ריק', ויש מבנים מיוחדים להדגשה. גם בחירת המשלב חשובה ברמה C2.",
+ rules:["<b>It + be + שם תואר + that / to</b>: <i>It is essential to understand…</i>","<b>There</b> כשאומרים שמשהו קיים: <i>There remains little doubt…</i>","<b>הדגשה עם <i>It was… that…</i></b>: <i>It was the lack of funding that caused the delay.</i>","<b>הדגשה עם <i>What… is…</i></b>: <i>What I need is a quiet place.</i>","<b>משלב רשמי</b>: מעדיפים פועל רשמי אחד על פני פועל + מילית (tolerate, investigate, postpone)."],
+ h:["נושא 'ריק' בתחילת המשפט.","חסר נושא.","It was + המוקד + that…","What + משפט + is…","בדקו את הפועל <i>appear</i>.","פועל רשמי אחד."],
+ e:["<b>It is widely acknowledged that…</b>","<i>It is essential to understand the context.</i>","<i>It was the lack of funding that caused the delay.</i>","<b>What I need is…</b> השוו <i>All (that) I need is…</i>","<i>It appears that…</i> (<i>appear</i> לא בא בסביל).","<b>tolerate</b>."]}
+};
+
+const $ = (s, r=document) => r.querySelector(s);
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+const STORE = "c2grammar-v1";
+let progress = {};
+try { progress = JSON.parse(localStorage.getItem(STORE) || "{}"); } catch (e) { progress = {}; }
+const save = () => { try { localStorage.setItem(STORE, JSON.stringify(progress)); } catch (e) {} };
+const norm = s => s.toLowerCase().replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[.,;:!?"]/g, "").replace(/\s+/g, " ").trim();
+// Keep English runs inside Hebrew text together as one left-to-right unit, so word order and punctuation stay correct
+const LATIN = /-?[A-Za-z][A-Za-z0-9'\u2019\-]*(?:(?:\s*[\/+,;]\s*|\s+)(?:-?[A-Za-z][A-Za-z0-9'\u2019\-]*|\?))*(?:\u2026|\?|\.(?=\s))?|\?/g;
+const HEB = /[\u0590-\u05FF]/, LAT = /[A-Za-z]/;
+function ltrUnits(parent) {
+  // 1. split text nodes into Latin runs and the rest
+  Array.from(parent.childNodes).forEach(n => {
+    if (n.nodeType === 3) {
+      const txt = n.nodeValue, frag = document.createDocumentFragment(); let last = 0, m; LATIN.lastIndex = 0;
+      while ((m = LATIN.exec(txt))) {
+        let start = m.index, s = m[0];
+        if (s.charAt(0) === "-" && start > 0 && HEB.test(txt.charAt(start - 1))) { start++; s = s.slice(1); } // hyphen of a Hebrew prefix such as ב-
+        if (start > last) frag.append(document.createTextNode(txt.slice(last, start)));
+        const sp = document.createElement("span"); sp.className = "ltr"; sp.textContent = s; frag.append(sp); last = start + s.length;
+        if (m[0] === "") LATIN.lastIndex++;
+      }
+      if (last < txt.length) frag.append(document.createTextNode(txt.slice(last)));
+      parent.replaceChild(frag, n);
+    } else if (n.nodeType === 1 && !n.classList.contains("ltr") && HEB.test(n.textContent)) ltrUnits(n);
+  });
+  // 2. merge neighbouring English units (including <i>/<b> that contain only English) into one span
+  const isUnit = n => n.nodeType === 1 && (n.classList.contains("ltr") || (!HEB.test(n.textContent) && LAT.test(n.textContent)));
+  const isGlue = n => (n.nodeType === 3 && /^\s*[\/+,;]?\s*$/.test(n.nodeValue)) || (n.nodeType === 1 && n.classList.contains("arrow"));
+  let kids = Array.from(parent.childNodes), i = 0;
+  while (i < kids.length) {
+    if (!isUnit(kids[i])) { i++; continue; }
+    let j = i;
+    while (j + 2 < kids.length && isGlue(kids[j + 1]) && isUnit(kids[j + 2])) j += 2;
+    if (j > i) { const sp = document.createElement("span"); sp.className = "ltr"; parent.insertBefore(sp, kids[i]); for (let k = i; k <= j; k++) sp.append(kids[k]); }
+    else if (!kids[i].classList.contains("ltr")) { const sp = document.createElement("span"); sp.className = "ltr"; parent.insertBefore(sp, kids[i]); sp.append(kids[i]); }
+    i = j + 1;
+  }
+  // 3. example sentences (3+ English words in italics) get their own line, with surrounding brackets and punctuation kept attached
+  Array.from(parent.children).forEach(sp => {
+    if (!sp.classList.contains("ltr") || !sp.querySelector("i")) return;
+    if (sp.textContent.split(/\s+/).filter(w => LAT.test(w)).length < 3) return;
+    const pv = sp.previousSibling, nx = sp.nextSibling, T = s => document.createTextNode(s);
+    if (pv && nx && pv.nodeType === 3 && nx.nodeType === 3 && /\($/.test(pv.nodeValue) && /^\)/.test(nx.nodeValue)) {
+      pv.nodeValue = pv.nodeValue.slice(0, -1); sp.insertBefore(T("("), sp.firstChild);
+      const m = nx.nodeValue.match(/^\)[.,;:!?]*/); sp.append(T(m[0])); nx.nodeValue = nx.nodeValue.slice(m[0].length);
+    } else if (nx && nx.nodeType === 3) {
+      const m = nx.nodeValue.match(/^\)?[.,;:!?]*/); if (m[0]) { sp.append(T(m[0])); nx.nodeValue = nx.nodeValue.slice(m[0].length); }
+    }
+    sp.classList.add("ex");
+  });
+}
+const ltrWrap = he => { const d = document.createElement("div"); d.innerHTML = he; ltrUnits(d); return d.innerHTML; };
+const bi = (en, he) => '<span class="en">' + en + '</span><span class="he blk" lang="he" dir="rtl">' + ltrWrap(he) + '</span>';
+const sl = (en, he) => '<span class="en">' + en + '</span><span class="he sl" lang="he" dir="rtl">' + ltrWrap(he) + '</span>';
+const LABEL = { mc: sl("Choose", "בחירה"), spot: sl("Spot the error", "זיהוי טעות"), gap: sl("Fill the gap", "השלמה"), type: sl("Rewrite", "ניסוח מחדש") };
+const leadOf = (st, rev) => st === "c1" ? ["Correct.", "נכון."] : st === "c2" ? ["Correct on the second try.", "נכון, בניסיון השני."] : st === "prev" ? ["Previously revealed.", "התשובה נחשפה קודם."] : ["Answer: " + rev, "התשובה: " + rev];
+const plain = h => h.replace(/<[^>]+>/g, "");
+const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+// If the explanation already shows the correct answer, do not print it twice
+const shown = (rev, e) => { const r = plain(rev).trim(); return r.length > 1 && new RegExp("(^|[^A-Za-z])" + escRe(r) + "([^A-Za-z]|$)", "i").test(plain(e)); };
+const fbHTML = (st, rev, e, eHe) => { const L = st === "r" && shown(rev, e) ? ["Not this time.", "הפעם לא."] : leadOf(st, rev); return bi("<b>" + L[0] + "</b> " + e, "<b>" + L[1] + "</b> " + eHe); };
+let lang = "en";
+try { lang = localStorage.getItem(STORE + "-lang") || "en"; } catch (e) {}
+function setLang(l) {
+  lang = l; document.body.dataset.lang = l;
+  document.querySelectorAll(".langsw button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === l)));
+  try { localStorage.setItem(STORE + "-lang", l); } catch (e) {}
+}
+let reviewItems = null, reviewState = {};
+
+function statusOf(uid, i, isReview) { return isReview ? reviewState[uid + ":" + i] : (progress[uid] || {})[i]; }
+function setStatus(uid, i, v, isReview) {
+  if (isReview) { reviewState[uid + ":" + i] = v; return; }
+  (progress[uid] = progress[uid] || {})[i] = v; save();
+}
+function unitScore(u) {
+  const p = progress[u.id] || {}; let done = 0, first = 0;
+  u.items.forEach((_, i) => { if (p[i]) { done++; if (p[i] === "c1") first++; } });
+  return { done, first, total: u.items.length };
+}
+
+/* ---------- item rendering ---------- */
+function renderItem(item, uid, i, isReview, onChange) {
+  const card = el("article", "item");
+  const head = el("div", "item-head");
+  head.append(el("span", "num", String(i + 1)), el("span", "type", LABEL[item.t]));
+  card.append(head);
+  const H = HE[uid] || {}; const eHe = (H.e || [])[i] || ""; const hHe = (H.h || [])[i] || "";
+  const body = el("div", "q");
+  const fb = el("div", "fb"); fb.setAttribute("role", "status"); fb.setAttribute("aria-live", "polite");
+  const actions = el("div", "actions");
+  const hintBtn = el("button", "ghost", sl("Hint", "רמז")); hintBtn.type = "button";
+  const hintBox = el("div", "hint"); hintBox.hidden = true; hintBox.innerHTML = bi("<b>Hint:</b> " + item.h, "<b>רמז:</b> " + hHe);
+  hintBtn.onclick = () => { hintBox.hidden = !hintBox.hidden; hintBtn.setAttribute("aria-expanded", String(!hintBox.hidden)); };
+  let attempts = 0, finished = false;
+  const prior = statusOf(uid, i, isReview);
+
+  function finish(status, revealed) {
+    finished = true; setStatus(uid, i, status, isReview);
+    card.classList.add(status === "r" ? "revealed" : "done");
+    fb.className = "fb " + (status === "r" ? "bad" : "good");
+    fb.innerHTML = fbHTML(status, revealed, item.e, eHe);
+    hintBtn.disabled = true; actions.querySelectorAll("button.check").forEach(b => b.remove());
+    if (onChange) onChange();
+  }
+  function wrong() {
+    attempts++;
+    if (attempts >= 2) { return false; }
+    fb.className = "fb warn"; fb.innerHTML = bi("<b>Not quite.</b> Try once more. Open the hint if you need it.", "<b>לא בדיוק.</b> נסו שוב. אפשר לפתוח את הרמז."); hintBox.hidden = false;
+    return true;
+  }
+
+  if (item.t === "mc" || item.t === "spot") {
+    const stem = item.q.replace(/___/g, '<span class="blank"></span>');
+    body.innerHTML = '<p class="stem">' + stem + "</p>";
+    const list = el("div", "opts"); list.setAttribute("role", "group");
+    const btns = item.o.map((txt, k) => {
+      const b = el("button", "opt", '<span class="k">' + "ABCD"[k] + "</span><span>" + txt + "</span>"); b.type = "button";
+      b.onclick = () => {
+        if (finished) return;
+        if (k === item.a) { b.classList.add("right"); finish(attempts === 0 ? "c1" : "c2"); btns.forEach(x => x.disabled = true); }
+        else { b.classList.add("wrongopt"); b.disabled = true; if (!wrong()) { btns[item.a].classList.add("right"); btns.forEach(x => x.disabled = true); finish("r", "<i>" + "ABCD"[item.a] + "</i>"); } }
+      };
+      list.append(b); return b;
+    });
+    body.append(list);
+    card._reveal = () => { btns.forEach(x => x.disabled = true); btns[item.a].classList.add("right"); finish("r", "<i>" + "ABCD"[item.a] + "</i>"); };
+  } else {
+    let input;
+    const check = el("button", "primary check", sl("Check", "בדיקה")); check.type = "button";
+    if (item.t === "gap") {
+      const parts = item.q.split("___");
+      const p = el("p", "stem");
+      p.append(document.createTextNode(parts[0]));
+      input = el("input", "gapin"); input.type = "text"; input.autocomplete = "off"; input.autocapitalize = "off"; input.spellcheck = false;
+      input.setAttribute("aria-label", "Your answer"); input.size = 12;
+      p.append(input, document.createTextNode(parts[1] || "")); body.append(p);
+    } else {
+      body.append(el("p", "stem", item.q));
+      input = el("textarea", "typein"); input.rows = 2; input.spellcheck = false; input.setAttribute("aria-label", "Your answer");
+      input.placeholder = "Type your sentence here";
+      body.append(input);
+    }
+    const submit = () => {
+      if (finished) return;
+      const v = norm(input.value); if (!v) { input.focus(); return; }
+      if (item.a.some(a => norm(a) === v)) { input.classList.add("right"); input.disabled = true; finish(attempts === 0 ? "c1" : "c2"); }
+      else if (!wrong()) { input.disabled = true; finish("r", "<i>" + item.a[0] + "</i>"); }
+      else input.focus();
+    };
+    check.onclick = submit;
+    input.addEventListener("keydown", e => { if (e.key === "Enter" && (item.t === "gap" || !e.shiftKey)) { e.preventDefault(); submit(); } });
+    actions.append(check);
+    card._reveal = () => { input.disabled = true; finish("r", "<i>" + item.a[0] + "</i>"); };
+  }
+  const reveal = el("button", "ghost", sl("Show answer", "הצג תשובה")); reveal.type = "button";
+  reveal.onclick = () => { if (!finished) card._reveal(); };
+  actions.append(hintBtn, reveal);
+  card.append(body, actions, hintBox, fb);
+
+  if (prior && !isReview) { // restore finished state
+    if (item.t === "mc" || item.t === "spot") card.querySelectorAll(".opt").forEach((b, k) => { b.disabled = true; if (k === item.a) b.classList.add("right"); });
+    else { const inp = card.querySelector("input,textarea"); inp.value = item.a[0]; inp.disabled = true; }
+    finished = true; card.classList.add(prior === "r" ? "revealed" : "done");
+    fb.className = "fb " + (prior === "r" ? "bad" : "good");
+    fb.innerHTML = fbHTML(prior === "r" ? "prev" : prior, "", item.e, eHe);
+    hintBtn.disabled = true; actions.querySelectorAll("button.check").forEach(b => b.remove());
+  }
+  return card;
+}
+
+/* ---------- views ---------- */
+const main = $("#main"), nav = $("#nav");
+
+function buildNav(active) {
+  nav.innerHTML = "";
+  const home = el("a", "navlink" + (active === "home" ? " on" : ""), "<span>" + sl("Overview", "סקירה") + "</span>"); home.href = "#home"; nav.append(home);
+  UNITS.forEach((u, n) => {
+    const s = unitScore(u);
+    const a = el("a", "navlink" + (active === "unit-" + (n + 1) ? " on" : ""),
+      '<span class="nn">' + (n + 1) + '</span><span class="nt">' + u.title + '</span><span class="np">' + s.done + "/" + s.total + "</span>");
+    a.href = "#unit-" + (n + 1); nav.append(a);
+  });
+  const r = el("a", "navlink" + (active === "review" ? " on" : ""), "<span>" + sl("Mixed review", "חזרה מעורבת") + "</span>"); r.href = "#review"; nav.append(r);
+  const c = el("a", "navlink" + (active === "code" ? " on" : ""), "<span>" + sl("My progress code", "קוד ההתקדמות שלי") + "</span>"); c.href = "#code"; nav.append(c);
+}
+
+function viewHome() {
+  buildNav("home");
+  const totalItems = UNITS.reduce((a, u) => a + u.items.length, 0);
+  const done = UNITS.reduce((a, u) => a + unitScore(u).done, 0);
+  const first = UNITS.reduce((a, u) => a + unitScore(u).first, 0);
+  main.innerHTML = "";
+  main.append(el("section", "hero",
+    '<p class="eyebrow">' + sl("C2 grammar module", "מודול דקדוק לרמת C2") + '</p><h1>Precision in English: grammar for advanced Hebrew speakers</h1>' +
+    '<div class="lede">' + bi("Ten units on the structures that still cause errors, or sound slightly unnatural, even at C2. Each unit opens with the first-language pattern behind the error, a compact rule set and a before/after contrast. Then you practise: choose, spot the error, fill the gap, rewrite.",
+    "עשר יחידות על המבנים שעדיין גורמים לטעויות, או נשמעים לא טבעיים, גם ברמת C2. כל יחידה נפתחת בדפוס משפת האם שגורם לטעות, בכללים קצרים ובטבלת השוואה. אחר כך מתרגלים: בחירה, זיהוי טעות, השלמה וניסוח מחדש.") + "</div>"));
+  main.append(el("div", "stats",
+    "<div><b>" + done + "/" + totalItems + "</b><span>" + sl("items attempted", "תרגילים שנוסו") + "</span></div><div><b>" + first + "</b><span>" + sl("correct first time", "נכון בניסיון ראשון") + "</span></div><div><b>" + UNITS.length + "</b><span>" + sl("units", "יחידות") + "</span></div>"));
+  main.append(el("div", "how", bi("<b>How it works.</b> You have two tries per item. A hint is always available and costs nothing. Capitals and punctuation are ignored in typed answers. Use the buttons at the top left to switch the explanations between English and Hebrew. Your progress is kept in this browser.",
+    "<b>איך זה עובד.</b> יש שני ניסיונות בכל תרגיל. רמז תמיד זמין וללא עלות. אותיות גדולות וסימני פיסוק לא נבדקים בתשובות מוקלדות. הכפתורים בראש העמוד מחליפים את ההסברים בין אנגלית לעברית. ההתקדמות נשמרת בדפדפן הזה.")));
+  const grid = el("div", "grid");
+  UNITS.forEach((u, n) => {
+    const s = unitScore(u);
+    const c = el("a", "ucard", '<span class="tag">' + u.tag + '</span><span class="un">' + sl("Unit " + (n + 1), "יחידה " + (n + 1)) + "</span><h3>" + u.title + '</h3><div class="bar"><i style="width:' + (100 * s.done / s.total) + '%"></i></div><span class="meta">' + s.done + " / " + s.total + (s.done ? " &middot; " + s.first + " " + sl("first time", "בניסיון ראשון") : "") + "</span>");
+    c.href = "#unit-" + (n + 1); grid.append(c);
+  });
+  main.append(grid);
+  const row = el("div", "row");
+  const rv = el("a", "primary linkbtn", sl("Start a 15-item mixed review", "התחלת חזרה מעורבת של 15 תרגילים")); rv.href = "#review";
+  const rs = el("button", "ghost", sl("Reset all progress", "איפוס ההתקדמות")); rs.type = "button";
+  rs.onclick = () => { if (rs.dataset.armed) { progress = {}; save(); viewHome(); } else { rs.dataset.armed = "1"; rs.innerHTML = sl("Click again to confirm reset", "לחצו שוב לאישור האיפוס"); } };
+  const cd = el("a", "linkbtn", sl("Share my progress with my teacher", "שיתוף ההתקדמות שלי עם המורה")); cd.href = "#code";
+  row.append(rv, cd, rs); main.append(row);
+}
+
+function viewUnit(n) {
+  const u = UNITS[n - 1]; if (!u) return viewHome();
+  const H = HE[u.id] || { rules: [] };
+  buildNav("unit-" + n); main.innerHTML = "";
+  main.append(el("p", "eyebrow", sl("Unit " + n + " of " + UNITS.length, "יחידה " + n + " מתוך " + UNITS.length) + " &middot; " + u.tag), el("h1", "", u.title));
+  main.append(el("div", "alert", bi("<b>Hebrew-speaker alert.</b> " + u.alert, "<b>שימו לב, דוברי עברית.</b> " + (H.alert || ""))));
+  const lesson = el("section", "lesson"); lesson.append(el("h2", "", sl("The pattern", "הכלל")));
+  const ul = el("ul"); u.rules.forEach((r, k) => ul.append(el("li", "", bi(r, H.rules[k] || "")))); lesson.append(ul);
+  const tbl = el("table", "contrast", "<thead><tr><th>" + sl("Avoid", "להימנע") + "</th><th>" + sl("Use", "לכתוב") + "</th></tr></thead>");
+  const tb = el("tbody"); u.contrast.forEach(([w, r]) => tb.append(el("tr", "", '<td class="x">' + w + '</td><td class="v">' + r + "</td>"))); tbl.append(tb);
+  lesson.append(tbl); main.append(lesson);
+  main.append(el("h2", "", sl("Practice", "תרגול")));
+  const sum = el("div", "summary"); sum.setAttribute("aria-live", "polite");
+  const update = () => {
+    const s = unitScore(u); buildNav("unit-" + n);
+    sum.innerHTML = s.done < s.total ? bi("<b>" + s.done + " / " + s.total + "</b> attempted", "<b dir=\"ltr\">" + s.done + " / " + s.total + "</b> תרגילים נוסו") :
+      bi("<b>Unit complete.</b> " + s.first + " of " + s.total + " correct on the first try." + (s.first < s.total ? " Review the explanations marked in red." : " Excellent."),
+         "<b>היחידה הושלמה.</b> " + s.first + " מתוך " + s.total + " נכונים בניסיון ראשון." + (s.first < s.total ? " כדאי לקרוא שוב את ההסברים המסומנים באדום." : " מצוין."));
+  };
+  u.items.forEach((it, i) => main.append(renderItem(it, u.id, i, false, update)));
+  update(); main.append(sum);
+  const row = el("div", "row");
+  const redo = el("button", "ghost", sl("Redo this unit", "תרגול חוזר של היחידה")); redo.type = "button";
+  redo.onclick = () => { delete progress[u.id]; save(); viewUnit(n); window.scrollTo(0, 0); };
+  row.append(redo);
+  const next = el("a", "primary linkbtn", n < UNITS.length ? sl("Next unit", "היחידה הבאה") : sl("Mixed review", "חזרה מעורבת")); next.href = n < UNITS.length ? "#unit-" + (n + 1) : "#review";
+  row.append(next); main.append(row);
+}
+
+function viewReview() {
+  buildNav("review"); main.innerHTML = "";
+  main.append(el("p", "eyebrow", sl("Mixed review", "חזרה מעורבת")), el("h1", "", "Mixed review: 15 items from every unit"));
+  main.append(el("div", "lede", bi("Items are drawn at random from all ten units, so you must identify the pattern yourself.", "התרגילים נבחרים באקראי מכל עשר היחידות, ולכן צריך לזהות את הדפוס בעצמכם.")));
+  const all = []; UNITS.forEach(u => u.items.forEach((it, i) => all.push({ it, uid: u.id, i, title: u.title })));
+  for (let k = all.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [all[k], all[j]] = [all[j], all[k]]; }
+  reviewItems = all.slice(0, 15); reviewState = {};
+  const sum = el("div", "summary"); sum.setAttribute("aria-live", "polite");
+  const update = () => {
+    const vals = Object.values(reviewState); const c1 = vals.filter(v => v === "c1").length;
+    sum.innerHTML = vals.length < 15 ? bi("<b>" + vals.length + " / 15</b> attempted", "<b dir=\"ltr\">" + vals.length + " / 15</b> תרגילים נוסו") : bi("<b>Review complete.</b> " + c1 + " of 15 correct on the first try.", "<b>החזרה הושלמה.</b> " + c1 + " מתוך 15 נכונים בניסיון ראשון.");
+  };
+  reviewItems.forEach((r, k) => {
+    const wrap = el("div", "rwrap"); wrap.append(el("div", "from", sl("From: ", "מתוך: ") + r.title));
+    wrap.append(renderItem(r.it, r.uid, r.i, true, update)); wrap.querySelector(".num").textContent = k + 1; main.append(wrap);
+  });
+  update(); main.append(sum);
+  const row = el("div", "row"); const again = el("button", "primary", sl("New mix", "ערבוב חדש")); again.type = "button"; again.onclick = () => { viewReview(); window.scrollTo(0, 0); };
+  const back = el("a", "ghost linkbtn", sl("Back to overview", "חזרה לסקירה")); back.href = "#home"; row.append(again, back); main.append(row);
+}
+
+function buildCode(name) {
+  const p = UNITS.map(u => { const pr = progress[u.id] || {}; return u.items.map((_, i) => ({ c1: "1", c2: "2", r: "r" })[pr[i]] || "-").join(""); });
+  const json = JSON.stringify({ n: name, d: new Date().toISOString(), p });
+  return "C2G1." + btoa(unescape(encodeURIComponent(json))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function viewCode() {
+  buildNav("code"); main.innerHTML = "";
+  const totalItems = UNITS.reduce((a, u) => a + u.items.length, 0);
+  const done = UNITS.reduce((a, u) => a + unitScore(u).done, 0), first = UNITS.reduce((a, u) => a + unitScore(u).first, 0);
+  main.append(el("p", "eyebrow", sl("For your teacher", "עבור המורה")), el("h1", "", "My progress code"));
+  main.append(el("div", "lede", bi("Type your name, then copy your code and send it to your teacher. Your teacher pastes it into a teacher page to see your results. Make a new code whenever you want to share your latest work.",
+    "כתבו את השם שלכם, העתיקו את הקוד ושלחו אותו למורה. המורה מדביק אותו בדף המורה ורואה את התוצאות שלכם. אפשר ליצור קוד חדש בכל פעם שרוצים לשתף את ההתקדמות העדכנית.")));
+  main.append(el("div", "how", bi("<b>Your teacher will see:</b> your name, how many items you attempted in each unit, and which ones you got right first time. Nothing is sent automatically.",
+    "<b>המורה יראה:</b> את השם שלכם, כמה תרגילים ניסיתם בכל יחידה, ואילו מהם נכונים בניסיון הראשון. שום דבר לא נשלח אוטומטית.")));
+  const box = el("div", "codebox");
+  const lab = el("label", "", sl("Your name", "השם שלכם")); lab.setAttribute("for", "stname");
+  const inp = el("input", "nameinp"); inp.id = "stname"; inp.type = "text"; inp.maxLength = 60; inp.autocomplete = "name";
+  try { inp.value = localStorage.getItem(STORE + "-name") || ""; } catch (e) {}
+  const ta = el("textarea", "codeout"); ta.readOnly = true; ta.rows = 5; ta.setAttribute("aria-label", "Progress code");
+  const msg = el("div", "codemsg"); msg.setAttribute("aria-live", "polite");
+  const stats = el("p", "codestats", bi("You have attempted <b>" + done + " of " + totalItems + "</b> items and got <b>" + first + "</b> right first time.",
+    "ניסיתם <b dir=\"ltr\">" + done + " / " + totalItems + "</b> תרגילים, ו-<b>" + first + "</b> מהם נכונים בניסיון הראשון."));
+  const refresh = () => { const nm = inp.value.trim(); try { localStorage.setItem(STORE + "-name", nm); } catch (e) {} ta.value = nm ? buildCode(nm) : ""; msg.innerHTML = nm ? "" : bi("Type your name to create the code.", "כתבו את השם כדי ליצור את הקוד."); };
+  inp.addEventListener("input", refresh);
+  const copy = el("button", "primary", sl("Copy my code", "העתקת הקוד")); copy.type = "button";
+  copy.onclick = async () => {
+    if (!ta.value) { inp.focus(); return; }
+    let ok = false;
+    try { await navigator.clipboard.writeText(ta.value); ok = true; } catch (e) {}
+    if (!ok) { ta.focus(); ta.select(); try { ok = document.execCommand("copy"); } catch (e) {} }
+    msg.innerHTML = ok ? bi("<b>Copied.</b> Now paste it into a message to your teacher.", "<b>הועתק.</b> עכשיו הדביקו את הקוד בהודעה למורה.") : bi("The code is selected. Copy it yourself (Ctrl+C, or press and hold on a phone).", "הקוד מסומן. העתיקו אותו בעצמכם (Ctrl+C, או לחיצה ארוכה בטלפון).");
+  };
+  box.append(lab, inp, ta, el("div", "row"), msg);
+  box.querySelector(".row").append(copy);
+  main.append(box, stats); refresh();
+}
+
+function route() {
+  const h = (location.hash || "#home").slice(1);
+  if (h === "review") viewReview();
+  else if (h === "code") viewCode();
+  else if (/^unit-\d+$/.test(h)) viewUnit(parseInt(h.slice(5), 10));
+  else viewHome();
+  window.scrollTo(0, 0); main.focus({ preventScroll: true });
+}
+window.addEventListener("hashchange", route);
+route();
+
+document.querySelectorAll(".langsw button").forEach(b => b.addEventListener("click", () => setLang(b.dataset.l)));
+setLang(["en", "he", "both"].includes(lang) ? lang : "en");
+
+</script>
+</body>
+</html>
